@@ -1,0 +1,34 @@
+version: '2'
+services:
+  crawler:
+    build: crawler
+    links:
+      - postgres
+      - influxdb
+    environment:
+      - POSTGRES_DSN=host=postgres user=govelib dbname=govelib sslmode=disable password=govelib
+      - INFLUXDB_URI=http://influxdb:8086
+      - DB_AUTOMIGRATE=true
+      - JCD_CONTRACT=Paris
+    links:
+      - postgres
+      - influxdb
+  
+  postgres:
+    image: postgres:9.5
+    environment:
+      - POSTGRES_PASSWORD=govelib
+      - POSTGRES_USER=govelib
+      - POSTGRES_DB=govelib
+  
+  influxdb:
+    image: influxdb:0.13-alpine
+
+  chronograf:
+    image: lukasmartinelli/chronograf
+    ports:
+      - "10000:10000"
+    environment:
+      - INFLUXDB_HOST=influxdb
+    links:
+      - influxdb
