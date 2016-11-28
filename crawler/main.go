@@ -22,13 +22,17 @@ import (
 
 var jcdEndpointURI = "https://api.jcdecaux.com/vls/v1/stations?contract=%s&apiKey=%s"
 
+type Point struct {
+	Lat                 float64 `json:"lat"`
+	Lng                 float64 `json:"lng"`
+}
+
 type Station struct {
-	gorm.Model          `json:"-"`
+	gorm.Model
 	StationId           int   `json:"number" gorm:"unique_index"` // unique only within contract
 	Name                string  `json:"name"`
 	Address             string  `json:"address"`
-	Latitude            float64 `json:"latitude"`
-	Longitude           float64 `json:"longitude"`
+	Position            Point   `json:"position" gorm:"embedded";embedded_prefix:position_`
 	Status              string  `json:"status" gorm:"-"` // indicates whether this station is CLOSED or OPEN
 	BikeStands          int64   `json:"bike_stands" gorm:"-"` // the number of operational bike stands at this station
 	AvailableBikeStands int64   `json:"available_bike_stands" gorm:"-"` // the number of available bike stands at this station
@@ -158,6 +162,7 @@ func watchdogStations(c *cli.Context, db *gorm.DB, tsdbClient tsdbClient.Client)
 }
 
 func initStation(c *cli.Context, db *gorm.DB) {
+	db.AutoMigrate(&Point{})
 	db.AutoMigrate(&Station{})
 
 	var count int
@@ -188,7 +193,16 @@ func initStation(c *cli.Context, db *gorm.DB) {
 }
 
 func run(c *cli.Context) {
-	db, err := gorm.Open("postgres", c.String("postgres-dsn"))
+	var err error
+	var db *gorm.DB
+	for i := uint(0); i < 5; i++ {
+		db, err = gorm.Open("postgres", c.String("postgres-dsn"))
+		if err == nil {
+			break
+		}
+		log.Println("While connecting to station database", err)
+		time.Sleep((1 << i) * time.Second)
+	}
 	if err != nil {
 		log.Fatalln("While connecting to station database", err)
 	}

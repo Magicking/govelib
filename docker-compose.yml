@@ -9,6 +9,17 @@ services:
       - POSTGRES_DSN=host=postgres user=govelib dbname=govelib sslmode=disable password=govelib
       - INFLUXDB_URI=http://influxdb:8086
       - DB_AUTOMIGRATE=true
+      - JCD_API_KEY=CHANGEME
+      - JCD_CONTRACT=Paris
+    links:
+      - postgres
+      - influxdb
+  heatmap:
+    build: heatmap
+    environment:
+      - POSTGRES_DSN=host=postgres user=govelib dbname=govelib sslmode=disable password=govelib
+      - INFLUXDB_URI=http://influxdb:8086
+      - DB_AUTOMIGRATE=true
       - JCD_CONTRACT=Paris
     links:
       - postgres
@@ -24,11 +35,18 @@ services:
   influxdb:
     image: influxdb:0.13-alpine
 
-  chronograf:
-    image: lukasmartinelli/chronograf
-    ports:
-      - "10000:10000"
-    environment:
-      - INFLUXDB_HOST=influxdb
+  nginx:
+    build: nginx
     links:
-      - influxdb
+      - heatmap
+    ports:
+      - "8080:80"
+
+#  chronograf:
+#    image: lukasmartinelli/chronograf
+#    ports:
+#      - "10000:10000"
+#    environment:
+#      - INFLUXDB_HOST=influxdb
+#    links:
+#      - influxdb
