@@ -120,7 +120,7 @@ func updateJCDStations(url string, contract string, db *gorm.DB, clnt tsdbClient
 	updated, err := importStation(res.Body, func(s interface{}) bool {
 		var _sta Station
 		sta := s.(*Station)
-		db.FirstOrInit(&_sta, sta)
+		db.FirstOrInit(&_sta, Station{StationId: sta.StationId})
 		/*
 			This check is useful to prevent external provider to correct past
 			history, developer should get notified if that happens
