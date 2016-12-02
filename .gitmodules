@@ -1,0 +1,43 @@
+[submodule "heatmap/github.com/influxdata/influxdb"]
+	path = heatmap/vendor/github.com/influxdata/influxdb
+	url = https://github.com/influxdata/influxdb
+[submodule "heatmap/github.com/ziutek/mymysql"]
+	path = heatmap/vendor/github.com/ziutek/mymysql
+	url = https://github.com/ziutek/mymysql
+[submodule "heatmap/github.com/lib/pq"]
+	path = heatmap/vendor/github.com/lib/pq
+	url = https://github.com/lib/pq
+[submodule "heatmap/github.com/codegangsta/cli"]
+	path = heatmap/vendor/github.com/codegangsta/cli
+	url = https://github.com/codegangsta/cli
+[submodule "heatmap/github.com/kylelemons/go-gypsy"]
+	path = heatmap/vendor/github.com/kylelemons/go-gypsy
+	url = https://github.com/kylelemons/go-gypsy
+[submodule "heatmap/github.com/kellydunn/golang-geo"]
+	path = heatmap/vendor/github.com/kellydunn/golang-geo
+	url = https://github.com/kellydunn/golang-geo
+[submodule "heatmap/github.com/erikstmartin/go-testdb"]
+	path = heatmap/vendor/github.com/erikstmartin/go-testdb
+	url = https://github.com/erikstmartin/go-testdb
+[submodule "heatmap/github.com/jinzhu/inflection"]
+	path = heatmap/vendor/github.com/jinzhu/inflection
+	url = https://github.com/jinzhu/inflection
+[submodule "heatmap/github.com/jinzhu/gorm"]
+	path = heatmap/vendor/github.com/jinzhu/gorm
+	url = https://github.com/jinzhu/gorm
+
+[submodule "crawler/github.com/influxdata/influxdb"]
+	path = crawler/vendor/github.com/influxdata/influxdb
+	url = https://github.com/influxdata/influxdb
+[submodule "crawler/github.com/lib/pq"]
+	path = crawler/vendor/github.com/lib/pq
+	url = https://github.com/lib/pq
+[submodule "crawler/github.com/codegangsta/cli"]
+	path = crawler/vendor/github.com/codegangsta/cli
+	url = https://github.com/codegangsta/cli
+[submodule "crawler/github.com/jinzhu/inflection"]
+	path = crawler/vendor/github.com/jinzhu/inflection
+	url = https://github.com/jinzhu/inflection
+[submodule "crawler/github.com/jinzhu/gorm"]
+	path = crawler/vendor/github.com/jinzhu/gorm
+	url = https://github.com/jinzhu/gorm
