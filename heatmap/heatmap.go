@@ -188,7 +188,7 @@ func initStation(c *cli.Context, db *gorm.DB) {
 func run(c *cli.Context) {
 	var err error
 	var db *gorm.DB
-	for i := uint(0); i < 5; i++ {
+	for i := uint(0); i < 10; i++ {
 		db, err = gorm.Open("postgres", c.String("postgres-dsn"))
 		if err == nil {
 			break
