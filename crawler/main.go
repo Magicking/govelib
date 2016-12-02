@@ -28,8 +28,7 @@ type Point struct {
 }
 
 type Station struct {
-	gorm.Model
-	StationId           int    `json:"number" gorm:"unique_index"` // unique only within contract
+	StationId           int    `json:"number" gorm:"index"` // unique only within contract
 	Name                string `json:"name"`
 	Address             string `json:"address"`
 	Position            Point  `json:"position" gorm:"embedded";embedded_prefix:position_`
@@ -120,7 +119,7 @@ func updateJCDStations(url string, contract string, db *gorm.DB, clnt tsdbClient
 	updated, err := importStation(res.Body, func(s interface{}) bool {
 		var _sta Station
 		sta := s.(*Station)
-		db.FirstOrInit(&_sta, Station{StationId: sta.StationId})
+		db.FirstOrInit(&_sta, sta)
 		/*
 			This check is useful to prevent external provider to correct past
 			history, developer should get notified if that happens

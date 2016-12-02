@@ -1,17 +1,12 @@
 package main
 
-import (
-	"github.com/jinzhu/gorm"
-)
-
 type Point struct {
 	Lat float64 `json:"lat"`
 	Lng float64 `json:"lng"`
 }
 
 type Station struct {
-	gorm.Model          `json:"-"`
-	StationId           int    `json:"number" gorm:"unique_index"` // unique only within contract
+	StationId           int    `json:"number" gorm:"index"` // unique only within contract
 	Name                string `json:"name"`
 	Address             string `json:"address"`
 	Position            Point  `json:"position" gorm:"embedded";embedded_prefix:position_`
