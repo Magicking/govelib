@@ -1,13 +1,13 @@
 package main
 
 import (
-	"log"
-	"os"
-	"fmt"
-	"strconv"
-	"os/signal"
-	"net/http"
 	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -20,12 +20,11 @@ import (
 )
 
 type GeoCache struct {
-	db *gorm.DB
+	db         *gorm.DB
 	Attractors interface{}
-	Repulsors interface{}
+	Repulsors  interface{}
 	Activities interface{}
 }
-
 
 func NewGeoCache(db *gorm.DB) *GeoCache {
 	return &GeoCache{db: db}
@@ -38,7 +37,7 @@ func (gc *GeoCache) GetCoordinates(stationId int) (lat, lng float64, err error) 
 		err = fmt.Errorf("Station %v not in database", stationId)
 		return
 	}
-	
+
 	lat = station.Position.Lat
 	lng = station.Position.Lng
 	return
@@ -66,7 +65,7 @@ func updateHeatMap(contract, delta, timeLimit string, geoCache *GeoCache, tsClie
 		if err != nil {
 			return err
 		}
-		availableBikesNow, err := row.Values[len(row.Values) - 1][1].(json.Number).Int64()
+		availableBikesNow, err := row.Values[len(row.Values)-1][1].(json.Number).Int64()
 		if err != nil {
 			return err
 		}
@@ -76,7 +75,7 @@ func updateHeatMap(contract, delta, timeLimit string, geoCache *GeoCache, tsClie
 		if err != nil {
 			return err
 		}
-		availableBikeStandsNow, err := row.Values[len(row.Values) - 1][2].(json.Number).Int64()
+		availableBikeStandsNow, err := row.Values[len(row.Values)-1][2].(json.Number).Int64()
 		if err != nil {
 			return err
 		}
@@ -138,10 +137,10 @@ func updateHeatMap(contract, delta, timeLimit string, geoCache *GeoCache, tsClie
 	var attractorDelta float64
 	var repulsorDelta float64
 	if availableBikesDeltaLow < 0 {
-		attractorDelta = - float64(availableBikesDeltaLow)
+		attractorDelta = -float64(availableBikesDeltaLow)
 	}
 	if availableBikeStandsDeltaLow < 0 {
-		repulsorDelta = - float64(availableBikeStandsDeltaLow)
+		repulsorDelta = -float64(availableBikeStandsDeltaLow)
 	}
 	// normalize
 	for _, element := range attractors {
@@ -210,26 +209,29 @@ func run(c *cli.Context) {
 	defer clnt.Close()
 	geoCache := NewGeoCache(db)
 	go watchdogStations(c, geoCache, &clnt)
-	http.HandleFunc("/map/activities", func (w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/map/activities", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		if err := json.NewEncoder(w).Encode(geoCache.Activities); err != nil {
 			log.Print(err)
-	}})
-    http.HandleFunc("/map/attractors", func (w http.ResponseWriter, r *http.Request) {
+		}
+	})
+	http.HandleFunc("/map/attractors", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		if err := json.NewEncoder(w).Encode(geoCache.Attractors); err != nil {
 			log.Print(err)
-	}})
-    http.HandleFunc("/map/repulsors", func (w http.ResponseWriter, r *http.Request) {
+		}
+	})
+	http.HandleFunc("/map/repulsors", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		if err := json.NewEncoder(w).Encode(geoCache.Repulsors); err != nil {
 			log.Print(err)
-	}})
+		}
+	})
 
-    go func () {
+	go func() {
 		log.Fatal(http.ListenAndServe(":8080", nil))
 	}()
 

@@ -23,22 +23,22 @@ import (
 var jcdEndpointURI = "https://api.jcdecaux.com/vls/v1/stations?contract=%s&apiKey=%s"
 
 type Point struct {
-	Lat                 float64 `json:"lat"`
-	Lng                 float64 `json:"lng"`
+	Lat float64 `json:"lat"`
+	Lng float64 `json:"lng"`
 }
 
 type Station struct {
 	gorm.Model
-	StationId           int   `json:"number" gorm:"unique_index"` // unique only within contract
-	Name                string  `json:"name"`
-	Address             string  `json:"address"`
-	Position            Point   `json:"position" gorm:"embedded";embedded_prefix:position_`
-	Status              string  `json:"status" gorm:"-"` // indicates whether this station is CLOSED or OPEN
-	BikeStands          int64   `json:"bike_stands" gorm:"-"` // the number of operational bike stands at this station
-	AvailableBikeStands int64   `json:"available_bike_stands" gorm:"-"` // the number of available bike stands at this station
-	AvailaibleBikes     int64   `json:"available_bikes" gorm:"-"` // the number of available and operational bikes at this station
-	LastUpdate          int64   `json:"last_update" gorm:"-"` // timestamp indicating the last update time in milliseconds since Epoch
-	InternalLastUpdate  int64   `json:"-"`
+	StationId           int    `json:"number" gorm:"unique_index"` // unique only within contract
+	Name                string `json:"name"`
+	Address             string `json:"address"`
+	Position            Point  `json:"position" gorm:"embedded";embedded_prefix:position_`
+	Status              string `json:"status" gorm:"-"`                // indicates whether this station is CLOSED or OPEN
+	BikeStands          int64  `json:"bike_stands" gorm:"-"`           // the number of operational bike stands at this station
+	AvailableBikeStands int64  `json:"available_bike_stands" gorm:"-"` // the number of available bike stands at this station
+	AvailaibleBikes     int64  `json:"available_bikes" gorm:"-"`       // the number of available and operational bikes at this station
+	LastUpdate          int64  `json:"last_update" gorm:"-"`           // timestamp indicating the last update time in milliseconds since Epoch
+	InternalLastUpdate  int64  `json:"-"`
 }
 
 /*
@@ -74,23 +74,23 @@ func importStation(r io.Reader, cb callback) (int, error) {
 	return updated, nil
 }
 
-func writeStation(staChan chan *Station , contractname string, clnt tsdbClient.Client) {
+func writeStation(staChan chan *Station, contractname string, clnt tsdbClient.Client) {
 	bp, _ := tsdbClient.NewBatchPoints(tsdbClient.BatchPointsConfig{
-		Database: contractname,
+		Database:  contractname,
 		Precision: "ms", //TODO
 	})
 
 	for station := range staChan {
 		tags := map[string]string{
-			"station_name":    station.Name,
-			"status": station.Status,
-			"station_id": strconv.Itoa(station.StationId),
+			"station_name": station.Name,
+			"status":       station.Status,
+			"station_id":   strconv.Itoa(station.StationId),
 		}
 
 		fields := map[string]interface{}{
-			"bike_stands": station.BikeStands,
+			"bike_stands":           station.BikeStands,
 			"available_bike_stands": station.AvailableBikeStands,
-			"available_bikes": station.AvailaibleBikes,
+			"available_bikes":       station.AvailaibleBikes,
 		}
 		t := time.Unix(0, 0).Add(time.Duration(station.LastUpdate) * time.Millisecond)
 		pt, err := tsdbClient.NewPoint("stations", tags, fields, t)
@@ -153,12 +153,6 @@ func watchdogStations(c *cli.Context, db *gorm.DB, tsdbClient tsdbClient.Client)
 		}
 		log.Printf("%d updated stations", updated)
 	}
-	// Every minute after a successful GET start the following function
-	// GET JSON with jcd-api-key and jcd-contract at
-	// For each station
-	// Update db if new station and show it
-	// Continue to next entry if internal last update is after JCD last update
-	// Put data in tsdbClient for everything can be updated
 }
 
 func initStation(c *cli.Context, db *gorm.DB) {
