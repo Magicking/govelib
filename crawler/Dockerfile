@@ -5,7 +5,6 @@ ENV GOBIN $GOPATH/bin
 
 ENV PROJECT_PATH /go/src/crawler
 
-COPY src /go/src
 COPY vendor $PROJECT_PATH/vendor
 COPY main.go $PROJECT_PATH/
 
