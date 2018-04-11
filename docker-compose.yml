@@ -1,7 +1,8 @@
 version: '2'
 services:
   crawler:
-    build: crawler
+    build: .
+    entrypoint: /go/bin/crawler
     links:
       - postgres
       - influxdb
@@ -9,44 +10,46 @@ services:
       - POSTGRES_DSN=host=postgres user=govelib dbname=govelib sslmode=disable password=govelib
       - INFLUXDB_URI=http://influxdb:8086
       - DB_AUTOMIGRATE=true
-      - JCD_API_KEY=CHANGEME
-      - JCD_CONTRACT=Paris
     links:
       - postgres
       - influxdb
   heatmap:
-    build: heatmap
+    build: .
+    entrypoint: /go/bin/heatmap
     environment:
       - POSTGRES_DSN=host=postgres user=govelib dbname=govelib sslmode=disable password=govelib
       - INFLUXDB_URI=http://influxdb:8086
+      - CITY=paris
       - DB_AUTOMIGRATE=true
-      - JCD_CONTRACT=Paris
     links:
       - postgres
       - influxdb
-  
   postgres:
     image: postgres:9.5
     environment:
       - POSTGRES_PASSWORD=govelib
       - POSTGRES_USER=govelib
       - POSTGRES_DB=govelib
-  
   influxdb:
     image: influxdb:0.13-alpine
-
-  nginx:
-    build: nginx
-    links:
-      - heatmap
+  caddy-proxy:
+      image: abiosoft/caddy
+      #        restart: unless-stopped
+      ports:
+        - 0.0.0.0:8080:8080
+      volumes:
+        - ./Caddyfile:/etc/Caddyfile
+        - ./www:/www
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "1m"
+          max-file: "10"
+  chronograf:
+    image: lukasmartinelli/chronograf
     ports:
-      - "8080:80"
-
-#  chronograf:
-#    image: lukasmartinelli/chronograf
-#    ports:
-#      - "10000:10000"
-#    environment:
-#      - INFLUXDB_HOST=influxdb
-#    links:
-#      - influxdb
+      - "10000:10000"
+    environment:
+      - INFLUXDB_HOST=influxdb
+    links:
+      - influxdb
