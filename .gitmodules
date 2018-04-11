@@ -41,3 +41,18 @@
 [submodule "crawler/github.com/jinzhu/gorm"]
 	path = crawler/vendor/github.com/jinzhu/gorm
 	url = https://github.com/jinzhu/gorm
+[submodule "vendor/github.com/codegangsta/cli"]
+	path = vendor/github.com/codegangsta/cli
+	url = https://github.com/codegangsta/cli
+[submodule "vendor/github.com/influxdata/influxdb"]
+	path = vendor/github.com/influxdata/influxdb
+	url = https://github.com/influxdata/influxdb
+[submodule "vendor/github.com/jinzhu/gorm"]
+	path = vendor/github.com/jinzhu/gorm
+	url = https://github.com/jinzhu/gorm
+[submodule "vendor/github.com/jinzhu/inflection"]
+	path = vendor/github.com/jinzhu/inflection
+	url = https://github.com/jinzhu/inflection
+[submodule "vendor/github.com/lib/pq"]
+	path = vendor/github.com/lib/pq
+	url = https://github.com/lib/pq
