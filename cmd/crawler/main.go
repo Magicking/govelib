@@ -102,8 +102,8 @@ func writeStation(staChan chan *common.Station, contractname string, clnt tsdbCl
 			"available_bike_stands": station.AvailableBikeStands,
 			"available_bikes":       station.AvailableBikes,
 		}
-		t := time.Unix(station.LastUpdate, 0).Add(time.Duration(station.LastUpdate) * time.Millisecond)
-		pt, err := tsdbClient.NewPoint("stations", tags, fields, t)
+		//t := time.Unix(station.LastUpdate, 0).Add(time.Duration(station.LastUpdate) * time.Millisecond)
+		pt, err := tsdbClient.NewPoint("stations", tags, fields, time.Now())
 		if err != nil {
 			log.Print("Error while creating new point: ", err)
 			continue
